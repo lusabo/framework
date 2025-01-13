@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<h1>Detalhes do Curso</h1>
+<p><strong>ID:</strong> {{ course.id }}</p>
+<p><strong>Descrição:</strong> {{ course.description }}</p>
+
+<a href="{% url 'course_update' course.pk %}">Editar</a>
+<a href="{% url 'course_list' %}">Voltar para a lista</a>
+{% endblock %}

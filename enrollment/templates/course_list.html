@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<h1>Lista de Cursos</h1>
+<ul>
+  {% for course in courses %}
+    <li>
+      <a href="{% url 'course_detail' course.pk %}">{{ course.description }}</a>
+      | <a href="{% url 'course_update' course.pk %}">Editar</a>
+      | <a href="{% url 'course_delete' course.pk %}">Excluir</a>
+    </li>
+  {% endfor %}
+</ul>
+
+<a href="{% url 'course_create' %}">Criar novo curso</a>
+{% endblock %}

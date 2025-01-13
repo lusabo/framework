@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}Minha Aplicação{% endblock %}</title>
+</head>
+<body>
+    <header>
+        <h1>Minha Aplicação Django</h1>
+    </header>
+
+    <main>
+        {% block content %}
+        <!-- O conteúdo específico de cada página vai aqui -->
+        {% endblock content %}
+    </main>
+
+    <footer>
+        <p>&copy; 2025 - Minha Aplicação</p>
+    </footer>
+</body>
+</html>
