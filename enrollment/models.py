@@ -59,7 +59,8 @@ class Student(models.Model):
     default_risk = models.CharField(
         max_length=5,
         choices=DEFAULT_RISK,
-        default="Baixo"
+        blank=True,
+        null=True
     )
 
     def __str__(self):
