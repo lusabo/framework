@@ -1,0 +1,5 @@
+<h1>Profession Details</h1>
+<p>Name: {{ profession.name }}</p>
+<a href="{% url 'profession-update' profession.pk %}">Edit</a>
+<a href="{% url 'profession-delete' profession.pk %}">Delete</a>
+<a href="{% url 'profession-list' %}">Back to list</a>

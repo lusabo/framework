@@ -1,67 +1,54 @@
 from django.db import models
 
-class Course(models.Model):
-    description = models.CharField(max_length=100)
+class City(models.Model):
+    name = models.CharField(max_length=255)
 
     def __str__(self):
-        return self.description
+        return self.name
+
+class Profession(models.Model):
+    name = models.CharField(max_length=255)
+
+    def __str__(self):
+        return self.name
+
+class SleepDuration(models.Model):
+    name = models.CharField(max_length=255)
+
+    def __str__(self):
+        return self.name
+
+class DietaryHabits(models.Model):
+    name = models.CharField(max_length=255)
+
+    def __str__(self):
+        return self.name
+
+class Degree(models.Model):
+    name = models.CharField(max_length=255)
+
+    def __str__(self):
+        return self.name
 
 class Student(models.Model):
-
-    GENDER_CHOICES = [
-        ("M", "Masculino"),
-        ("F", "Feminino"),
-        ("O", "Outro")
-    ]
-
-    MARITAL_STATUS_CHOICES = [
-        ("Solteiro", "Solteiro"),
-        ("Casado", "Casado"),
-        ("Divorciado", "Divorciado"),
-        ("Viúvo", "Viúvo"),
-    ]
-
-    TRANSPORTATION_CHOICES = [
-        ("Carro", "Carro"),
-        ("Transporte público", "Transporte público"),
-        ("A pé", "A pé"),
-        ("Bicicleta", "Bicicleta"),
-        ("Outros", "Outros"),
-    ]
-
-    DEFAULT_RISK = [
-        ("Baixo", "Baixo"),
-        ("Médio", "Médio"),
-        ("Alto", "Alto"),
-    ]
-
-    name = models.CharField(max_length=100)
+    name = models.CharField(max_length=255)
     date_birth = models.DateField()
-    gender = models.CharField(
-        max_length=10,
-        choices=GENDER_CHOICES
-    )
-    enrollment_number = models.CharField(max_length=10)
-    course = models.ForeignKey(Course, on_delete=models.CASCADE)
-    marital_status = models.CharField(
-        max_length=15,
-        choices=MARITAL_STATUS_CHOICES
-    )
-    children = models.BooleanField(default=False)
-    disabled = models.BooleanField(default=False)
-    mode_transportation = models.CharField(
-        max_length=30,
-        choices=TRANSPORTATION_CHOICES
-    )
-    household_size = models.PositiveIntegerField()
-    annual_household_income = models.FloatField()
-    defaulter = models.BooleanField(default=False)
-    default_risk = models.CharField(
-        max_length=5,
-        choices=DEFAULT_RISK,
-        blank=True,
-        null=True
-    )
+    gender = models.CharField(max_length=50)
+    city = models.ForeignKey(City, on_delete=models.CASCADE, related_name='students')
+    profession = models.ForeignKey(Profession, on_delete=models.CASCADE, related_name='students')
+    academic_pressure = models.IntegerField()
+    work_pressure = models.IntegerField()
+    cgpa = models.FloatField()
+    study_satisfaction = models.IntegerField()
+    job_satisfaction = models.IntegerField()
+    sleep_duration = models.ForeignKey(SleepDuration, on_delete=models.CASCADE, related_name='students')
+    dietary_habits = models.ForeignKey(DietaryHabits, on_delete=models.CASCADE, related_name='students')
+    degree = models.ForeignKey(Degree, on_delete=models.CASCADE, related_name='students')
+    suicidal_thoughts = models.BooleanField()
+    work_study_hour = models.IntegerField()
+    financial_strees = models.IntegerField()
+    family_history_mental_illness = models.BooleanField()
+    risk_of_drepession = models.FloatField()
 
     def __str__(self):
         return self.name

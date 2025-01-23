@@ -1,0 +1,5 @@
+<h1>Sleep Duration Details</h1>
+<p>Name: {{ sleep_duration.name }}</p>
+<a href="{% url 'sleep-duration-update' sleep_duration.pk %}">Edit</a>
+<a href="{% url 'sleep-duration-delete' sleep_duration.pk %}">Delete</a>
+<a href="{% url 'sleep-duration-list' %}">Back to list</a>

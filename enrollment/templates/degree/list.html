@@ -1,0 +1,7 @@
+<h1>List of Degrees</h1>
+<ul>
+    {% for degree in degrees %}
+        <li><a href="{{ degree.get_absolute_url }}">{{ degree.name }}</a></li>
+    {% endfor %}
+</ul>
+<a href="{% url 'degree-create' %}">Add New Degree</a>

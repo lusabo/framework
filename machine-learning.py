@@ -3,7 +3,10 @@ import pickle
 from sklearn.linear_model import LogisticRegression
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
-from sklearn.metrics import accuracy_score
+from sklearn.metrics import (
+    accuracy_score, precision_score, recall_score, f1_score,
+    roc_auc_score, matthews_corrcoef, roc_curve
+)
 
 # Métodos auxiliares
 def get_columns_with_nulls(data):
@@ -50,8 +53,26 @@ model.fit(X_train, y_train)
 
 # Avaliar o modelo
 y_pred = model.predict(X_test)
+y_pred_proba = model.predict_proba(X_test)[:, 1]  # Probabilidades para a classe positiva
 
-print("\nAcurácia com todas as features:", accuracy_score(y_test, y_pred))
+# Calcular métricas
+accuracy = accuracy_score(y_test, y_pred)
+precision = precision_score(y_test, y_pred)
+recall = recall_score(y_test, y_pred)
+f1 = f1_score(y_test, y_pred)
+mcc = matthews_corrcoef(y_test, y_pred)
+auc = roc_auc_score(y_test, y_pred_proba)
+
+# Imprimir métricas
+
+print("\nAvaliação do Modelo:")
+print(f"AUC: {auc:.3f}")
+print(f"Acurácia (CA): {accuracy:.3f}")
+print(f"F1: {f1:.3f}")
+print(f"Prec: {precision:.3f}")
+print(f"Recall: {recall:.3f}")
+print(f"MCC: {mcc:.3f}")
+
 
 model_filename = 'model.pkl'
 with open(model_filename, 'wb') as file:

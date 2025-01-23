@@ -1,0 +1,7 @@
+<h1>List of Professions</h1>
+<ul>
+    {% for profession in professions %}
+        <li><a href="{{ profession.get_absolute_url }}">{{ profession.name }}</a></li>
+    {% endfor %}
+</ul>
+<a href="{% url 'profession-create' %}">Add New Profession</a>

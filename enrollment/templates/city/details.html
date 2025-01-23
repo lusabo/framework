@@ -1,0 +1,5 @@
+<h1>City Details</h1>
+<p>Name: {{ city.name }}</p>
+<a href="{% url 'city-update' city.pk %}">Edit</a>
+<a href="{% url 'city-delete' city.pk %}">Delete</a>
+<a href="{% url 'city-list' %}">Back to list</a>

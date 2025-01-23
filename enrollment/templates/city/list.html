@@ -1,0 +1,7 @@
+<h1>List of Cities</h1>
+<ul>
+    {% for city in cities %}
+        <li><a href="{{ city.get_absolute_url }}">{{ city.name }}</a></li>
+    {% endfor %}
+</ul>
+<a href="{% url 'city-create' %}">Add New City</a>

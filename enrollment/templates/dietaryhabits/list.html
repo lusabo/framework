@@ -1,0 +1,7 @@
+<h1>List of Dietary Habits</h1>
+<ul>
+    {% for dietary_habit in dietary_habits %}
+        <li><a href="{{ dietary_habit.get_absolute_url }}">{{ dietary_habit.name }}</a></li>
+    {% endfor %}
+</ul>
+<a href="{% url 'dietary-habits-create' %}">Add New Dietary Habit</a>
