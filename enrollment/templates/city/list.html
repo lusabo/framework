@@ -1,7 +1,13 @@
+{% extends "base.html" %}
+
+{% block title %}List of Cities{% endblock %}
+
+{% block content %}
 <h1>List of Cities</h1>
 <ul>
     {% for city in cities %}
         <li><a href="{{ city.get_absolute_url }}">{{ city.name }}</a></li>
     {% endfor %}
 </ul>
-<a href="{% url 'city-create' %}">Add New City</a>
+<a href="{% url 'city-create' %}"  class="btn btn-primary">Add New City</a>
+{% endblock %}

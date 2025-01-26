@@ -1,7 +1,17 @@
+from django.contrib.auth.views import LoginView, LogoutView
+from django.shortcuts import redirect
 from django.urls import path
 from . import views
 
 urlpatterns = [
+
+    path('', lambda request: redirect('login')),
+
+    path('login/', LoginView.as_view(), name='login'),
+    path('logout/', LogoutView.as_view(), name='logout'),
+
+    path('home/', views.HomeView.as_view(), name='home'),
+
     # City Views
     path('cities/', views.CityListView.as_view(), name='city-list'),
     path('cities/new/', views.CityCreateView.as_view(), name='city-create'),
