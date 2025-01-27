@@ -156,8 +156,7 @@ class StudentCreateView(LoginRequiredMixin, CreateView):
     model = Student
     fields = ['name', 'date_birth', 'gender', 'city', 'profession', 'academic_pressure', 'work_pressure', 'cgpa',
               'study_satisfaction', 'job_satisfaction', 'sleep_duration', 'dietary_habits', 'degree',
-              'suicidal_thoughts', 'work_study_hour', 'financial_strees', 'family_history_mental_illness',
-              'risk_of_drepession']
+              'suicidal_thoughts', 'work_study_hour', 'financial_stress', 'family_history_mental_illness']
     template_name = 'student/form.html'
     success_url = reverse_lazy('student-list')
 
@@ -170,8 +169,7 @@ class StudentUpdateView(LoginRequiredMixin, UpdateView):
     model = Student
     fields = ['name', 'date_birth', 'gender', 'city', 'profession', 'academic_pressure', 'work_pressure', 'cgpa',
               'study_satisfaction', 'job_satisfaction', 'sleep_duration', 'dietary_habits', 'degree',
-              'suicidal_thoughts', 'work_study_hour', 'financial_strees', 'family_history_mental_illness',
-              'risk_of_drepession']
+              'suicidal_thoughts', 'work_study_hour', 'financial_stress', 'family_history_mental_illness']
     template_name = 'student/form.html'
     success_url = reverse_lazy('student-list')
 

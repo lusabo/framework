@@ -5,10 +5,21 @@
 {% block content %}
 
 <h1>Estudantes</h1>
-<ul>
-    {% for student in students %}
-        <li><a href="{{ student.get_absolute_url }}">{{ student.name }}</a></li>
-    {% endfor %}
-</ul>
+    <table class="table">
+  <thead>
+    <tr>
+        <th scope="col">Nome</th>
+        <th scope="col">Risco de Depressão</th>
+    </tr>
+  </thead>
+  <tbody>
+  {% for student in students %}
+    <tr>
+        <td><a href="{{ student.get_absolute_url }}">{{ student.name }}</a></td>
+        <td>{{ student.risk_of_depression }}</td>
+    </tr>
+  {% endfor %}
+  </tbody>
+</table>
 <a href="{% url 'student-create' %}">Add New Student</a>
 {% endblock %}

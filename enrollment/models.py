@@ -1,4 +1,6 @@
 from django.db import models
+from datetime import date
+from ai.utils import generate_depression_risk
 
 class City(models.Model):
     name = models.CharField(max_length=255)
@@ -46,9 +48,32 @@ class Student(models.Model):
     degree = models.ForeignKey(Degree, on_delete=models.CASCADE, related_name='students')
     suicidal_thoughts = models.BooleanField()
     work_study_hour = models.IntegerField()
-    financial_strees = models.IntegerField()
+    financial_stress = models.IntegerField()
     family_history_mental_illness = models.BooleanField()
-    risk_of_drepession = models.FloatField()
+    risk_of_depression = models.FloatField(editable=False, null=True, blank=True)
 
-    def __str__(self):
+    def save(self, *args, **kwargs):
+        if not self.risk_of_depression:
+            self.risk_of_depression = generate_depression_risk(self)
+        super().save(*args, **kwargs)
+
+    @property
+    def age(self):
+        """Calcula a idade do estudante com base na data de nascimento."""
+        if self.date_birth:
+            today = date.today()
+            return (
+                    today.year - self.date_birth.year - ((today.month, today.day) < (self.date_birth.month, self.date_birth.day))
+            )
+        return None
+
+    @property
+    def suicidal_thoughts_display(self):
+        return "Yes" if self.suicidal_thoughts else "No"
+
+    @property
+    def family_history_display(self):
+        return "Yes" if self.family_history_mental_illness else "No"
+
+def __str__(self):
         return self.name
