@@ -1,4 +1,5 @@
 from django.db import models
+from django.urls import reverse
 from datetime import date
 from ai.utils import generate_depression_risk
 
@@ -74,6 +75,9 @@ class Student(models.Model):
     @property
     def family_history_display(self):
         return "Yes" if self.family_history_mental_illness else "No"
+
+    def get_absolute_url(self):
+        return reverse('student-detail', kwargs={'pk': self.id})
 
 def __str__(self):
         return self.name
