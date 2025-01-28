@@ -9,14 +9,14 @@
   <thead>
     <tr>
         <th scope="col">Nome</th>
-        <th scope="col">Risco de Depressão</th>
+        <th scope="col">Risco de Depressão (%)</th>
     </tr>
   </thead>
   <tbody>
   {% for student in students %}
     <tr>
         <td><a href="{{ student.get_absolute_url }}">{{ student.name }}</a></td>
-        <td>{{ student.risk_of_depression }}</td>
+        <td>{{ student.risk_of_depression|floatformat:2 }}</td>
     </tr>
   {% endfor %}
   </tbody>
