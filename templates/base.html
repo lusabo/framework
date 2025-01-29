@@ -7,43 +7,41 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
-    <div class="d-flex">
-        <!-- Sidebar -->
-        <div class="bg-light border" id="sidebar" style="width: 250px; min-height: 100vh;">
-            <h5 class="p-3">Framework</h5>
-            <h6 class="p-3">Alunos</h6>
-            <div class="p-3">
-                <ul>
-                    <li>Gustavo Menossi</li>
-                    <li>Luciano Borges</li>
-                    <li>Marcio Hernandez</li>
+<div class="container-fluid">
+    <div class="row">
+        <!-- Sidebar (Fixo) -->
+        <nav class="col-md-3 col-lg-2 d-md-block bg-light sidebar vh-100">
+            <div class="position-sticky">
+                <div class="p-3 text-center border-bottom">
+                    <h4 class="fw-bold">Framework</h4>
+                </div>
+
+                <ul class="nav flex-column">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/home">🏠 Início</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'student-list' %}">👤 Alunos</a>
+                    </li>
+                    <li class="nav-item">
+                        <form method="post" action="{% url 'logout' %}" class="d-flex align-items-center w-100">
+                            {% csrf_token %}
+                            <button type="submit" class="btn nav-link text-danger w-100 text-start">🚪 Logout</button>
+                        </form>
+                    </li>
                 </ul>
             </div>
-            <ul class="nav flex-column">
-                <li class="nav-item">
-                    <a class="nav-link" href="/">Home</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{% url 'student-list' %}">Student</a>
-                </li>
-                <li class="nav-item">
-                    <!-- Formulário para Logout -->
-                    <form method="post" action="{% url 'logout' %}" class="d-inline">
-                        {% csrf_token %}
-                        <button type="submit" class="btn btn-link nav-link text-danger p-0">Logout</button>
-                    </form>
-                </li>
-            </ul>
-        </div>
+        </nav>
 
-        <!-- Main Content -->
-        <div class="p-4 flex-grow-1">
+        <!-- Conteúdo Principal -->
+        <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
             {% block content %}
-            <!-- Conteúdo principal será renderizado aqui -->
+                <!-- O conteúdo da página será inserido aqui -->
             {% endblock %}
-        </div>
-    </div>
+        </main>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
