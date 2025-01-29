@@ -1,4 +1,5 @@
 from django.db import models
+from django.core.validators import MinValueValidator, MaxValueValidator
 from django.urls import reverse
 from datetime import date
 from ai.utils import generate_depression_risk
@@ -34,13 +35,18 @@ class Degree(models.Model):
         return self.name
 
 class Student(models.Model):
+    GENDER_CHOICES = [
+        ('Male', 'Masculino'),
+        ('Female', 'Feminino')
+    ]
+
     name = models.CharField(max_length=255)
     date_birth = models.DateField()
-    gender = models.CharField(max_length=50)
+    gender = models.CharField(max_length=50, choices=GENDER_CHOICES)
     city = models.ForeignKey(City, on_delete=models.CASCADE, related_name='students')
     profession = models.ForeignKey(Profession, on_delete=models.CASCADE, related_name='students')
     academic_pressure = models.IntegerField()
-    work_pressure = models.IntegerField()
+    work_pressure = models.IntegerField(validators=[MinValueValidator(0), MaxValueValidator(5)])
     cgpa = models.FloatField()
     study_satisfaction = models.IntegerField()
     job_satisfaction = models.IntegerField()

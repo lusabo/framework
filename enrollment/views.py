@@ -1,5 +1,6 @@
 from django.views.generic import ListView, CreateView, DetailView, UpdateView, DeleteView, TemplateView
 from .models import City, Profession, SleepDuration, DietaryHabits, Degree, Student
+from .forms import StudentForm
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse_lazy
 
@@ -154,9 +155,7 @@ class StudentListView(LoginRequiredMixin, ListView):
 
 class StudentCreateView(LoginRequiredMixin, CreateView):
     model = Student
-    fields = ['name', 'date_birth', 'gender', 'city', 'profession', 'academic_pressure', 'work_pressure', 'cgpa',
-              'study_satisfaction', 'job_satisfaction', 'sleep_duration', 'dietary_habits', 'degree',
-              'suicidal_thoughts', 'work_study_hour', 'financial_stress', 'family_history_mental_illness']
+    form_class = StudentForm
     template_name = 'student/form.html'
     success_url = reverse_lazy('student-list')
 

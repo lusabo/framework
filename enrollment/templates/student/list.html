@@ -1,25 +1,38 @@
 {% extends "base.html" %}
 
-{% block title %}Estudantes{% endblock %}
-
 {% block content %}
-
-<h1>Estudantes</h1>
-    <table class="table">
-  <thead>
-    <tr>
-        <th scope="col">Nome</th>
-        <th scope="col">Risco de Depressão (%)</th>
-    </tr>
-  </thead>
-  <tbody>
-  {% for student in students %}
-    <tr>
-        <td><a href="{{ student.get_absolute_url }}">{{ student.name }}</a></td>
-        <td>{{ student.risk_of_depression|floatformat:2 }}</td>
-    </tr>
-  {% endfor %}
-  </tbody>
-</table>
-<a href="{% url 'student-create' %}">Add New Student</a>
+    <div class="container py-4">
+        <h1>Estudantes</h1>
+        <table class="table">
+            <thead>
+            <tr>
+                <th scope="col">Nome</th>
+                <th scope="col">Idade</th>
+                <th scope="col">Gênero</th>
+                <th scope="col">Profissão</th>
+                <th scope="col">Grau de Instrução</th>
+                <th scope="col">Risco de Depressão (%)</th>
+                <th></th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for student in students %}
+                <tr>
+                    <td>{{ student.name }}</td>
+                    <td>{{ student.age }}</td>
+                    <td>{{ student.gender }}</td>
+                    <td>{{ student.profession.name }}</td>
+                    <td>{{ student.degree.name }}</td>
+                    <td>{{ student.risk_of_depression|floatformat:2 }}</td>
+                    <td class="text-end">
+                        <a class="btn btn-info btn-sm" href="{{ student.get_absolute_url }}">Detalhes</a>
+                        <a class="btn btn-warning btn-sm" href="{% url 'student-update' student.pk %}">Editar</a>
+                        <a class="btn btn-danger btn-sm" href="{% url 'student-delete' student.pk %}">Apagar</a>
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+        <a class="btn btn-primary" href="{% url 'student-create' %}">Novo Estudante</a>
+    </div>
 {% endblock %}
