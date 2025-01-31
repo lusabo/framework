@@ -2,29 +2,38 @@
 
 {% block content %}
     <div class="container py-4">
-        <h1>Student Details</h1>
-        <ul>
-            <li>Name: {{ student.name }}</li>
-            <li>Date of Birth: {{ student.date_birth }}</li>
-            <li>Gender: {{ student.gender }}</li>
-            <li>City: {{ student.city }}</li>
-            <li>Profession: {{ student.profession }}</li>
-            <li>Academic Pressure: {{ student.academic_pressure }}</li>
-            <li>Work Pressure: {{ student.work_pressure }}</li>
-            <li>CGPA: {{ student.cgpa }}</li>
-            <li>Study Satisfaction: {{ student.study_satisfaction }}</li>
-            <li>Job Satisfaction: {{ student.job_satisfaction }}</li>
-            <li>Sleep Duration: {{ student.sleep_duration }}</li>
-            <li>Dietary Habits: {{ student.dietary_habits }}</li>
-            <li>Degree: {{ student.degree }}</li>
-            <li>Suicidal Thoughts: {{ student.suicidal_thoughts }}</li>
-            <li>Work/Study Hour: {{ student.work_study_hour }}</li>
-            <li>Financial Stress: {{ student.financial_stress }}</li>
-            <li>Family History Mental Illness: {{ student.family_history_mental_illness }}</li>
-            <li>Risk of Depression: {{ student.risk_of_depression }}</li>
-        </ul>
-        <a href="{% url 'student-update' student.pk %}">Edit</a>
-        <a href="{% url 'student-delete' student.pk %}">Delete</a>
-        <a href="{% url 'student-list' %}">Back to list</a>
+    <h1 class="mb-4">Detalhes do(a) Estudante</h1>
+
+    <div class="card">
+        <div class="card-body">
+            <ul class="list-group list-group-flush">
+                <li class="list-group-item"><strong>Nome:</strong> {{ student.name }}</li>
+                <li class="list-group-item"><strong>Data de Nascimento:</strong> {{ student.date_birth }}</li>
+                <li class="list-group-item"><strong>Gênero:</strong> {{ student.gender }}</li>
+                <li class="list-group-item"><strong>Cidade:</strong> {{ student.city }}</li>
+                <li class="list-group-item"><strong>Profissão:</strong> {{ student.profession }}</li>
+                <li class="list-group-item"><strong>Pressão Acadêmica:</strong> {{ student.academic_pressure }}</li>
+                <li class="list-group-item"><strong>Pressão no Trabalho:</strong> {{ student.work_pressure }}</li>
+                <li class="list-group-item"><strong>CGPA:</strong> {{ student.cgpa }}</li>
+                <li class="list-group-item"><strong>Satisfação com Estudos:</strong> {{ student.study_satisfaction }}</li>
+                <li class="list-group-item"><strong>Satisfação com Trabalho:</strong> {{ student.job_satisfaction }}</li>
+                <li class="list-group-item"><strong>Duração do Sono:</strong> {{ student.sleep_duration }}</li>
+                <li class="list-group-item"><strong>Hábitos Alimentares:</strong> {{ student.dietary_habits }}</li>
+                <li class="list-group-item"><strong>Grau Acadêmico:</strong> {{ student.degree }}</li>
+                <li class="list-group-item"><strong>Pensamentos Suicidas:</strong> {{ student.suicidal_thoughts }}</li>
+                <li class="list-group-item"><strong>Horas de Trabalho/Estudo:</strong> {{ student.work_study_hour }}</li>
+                <li class="list-group-item"><strong>Estresse Financeiro:</strong> {{ student.financial_stress }}</li>
+                <li class="list-group-item"><strong>Histórico Familiar de Doenças Mentais:</strong> {{ student.family_history_mental_illness }}</li>
+                <li class="list-group-item"><strong>Risco de Depressão:</strong> {{ student.risk_of_depression }}</li>
+            </ul>
+
+            <div class="mt-4 d-flex justify-content-end">
+                <a href="{% url 'student-update' student.pk %}" class="btn btn-primary me-2">Editar</a>
+                <a href="{% url 'student-delete' student.pk %}" class="btn btn-danger me-2">Apagar</a>
+                <a href="{% url 'student-list' %}" class="btn btn-secondary">Voltar</a>
+            </div>
+        </div>
     </div>
+</div>
+
 {% endblock %}
