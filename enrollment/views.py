@@ -1,8 +1,26 @@
-from django.views.generic import ListView, CreateView, DetailView, UpdateView, DeleteView, TemplateView
-from .models import City, Profession, SleepDuration, DietaryHabits, Degree, Student
-from .forms import StudentForm
+import base64
+import io
+import os
+
+import matplotlib
+import numpy as np
+import pandas as pd
+
+matplotlib.use("Agg")  # usar um backend que não abre janela de interface
+import matplotlib.pyplot as plt
+
+from django.conf import settings
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse_lazy
+from django.views.generic import ListView, CreateView, DetailView, UpdateView, DeleteView, TemplateView
+
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import confusion_matrix, roc_curve, auc, precision_score
+import pickle
+
+from .forms import StudentForm
+from .models import City, Student
+
 
 class HomeView(LoginRequiredMixin, TemplateView):
     template_name = 'home.html'
@@ -35,118 +53,6 @@ class CityDeleteView(LoginRequiredMixin, DeleteView):
     template_name = 'city/confirm_delete.html'
     success_url = reverse_lazy('city-list')
 
-# Profession Views
-class ProfessionListView(LoginRequiredMixin, ListView):
-    model = Profession
-    template_name = 'profession/list.html'
-    context_object_name = 'professions'
-
-class ProfessionCreateView(LoginRequiredMixin, CreateView):
-    model = Profession
-    fields = ['name']
-    template_name = 'profession/form.html'
-    success_url = reverse_lazy('profession-list')
-
-class ProfessionDetailView(LoginRequiredMixin, DetailView):
-    model = Profession
-    template_name = 'profession/detail.html'
-    context_object_name = 'profession'
-
-class ProfessionUpdateView(LoginRequiredMixin, UpdateView):
-    model = Profession
-    fields = ['name']
-    template_name = 'profession/form.html'
-    success_url = reverse_lazy('profession-list')
-
-class ProfessionDeleteView(LoginRequiredMixin, DeleteView):
-    model = Profession
-    template_name = 'profession/confirm_delete.html'
-    success_url = reverse_lazy('profession-list')
-
-# Sleep Duration Views
-class SleepDurationListView(LoginRequiredMixin, ListView):
-    model = SleepDuration
-    template_name = 'sleepduration/list.html'
-    context_object_name = 'sleep_durations'
-
-class SleepDurationCreateView(LoginRequiredMixin, CreateView):
-    model = SleepDuration
-    fields = ['name']
-    template_name = 'sleepduration/form.html'
-    success_url = reverse_lazy('sleep-duration-list')
-
-class SleepDurationDetailView(LoginRequiredMixin, DetailView):
-    model = SleepDuration
-    template_name = 'sleepduration/detail.html'
-    context_object_name = 'sleep_duration'
-
-class SleepDurationUpdateView(LoginRequiredMixin, UpdateView):
-    model = SleepDuration
-    fields = ['name']
-    template_name = 'sleepduration/form.html'
-    success_url = reverse_lazy('sleep-duration-list')
-
-class SleepDurationDeleteView(LoginRequiredMixin, DeleteView):
-    model = SleepDuration
-    template_name = 'sleepduration/confirm_delete.html'
-    success_url = reverse_lazy('sleep-duration-list')
-
-# Dietary Habits Views
-class DietaryHabitsListView(LoginRequiredMixin, ListView):
-    model = DietaryHabits
-    template_name = 'dietaryhabits/list.html'
-    context_object_name = 'dietary_habits'
-
-class DietaryHabitsCreateView(LoginRequiredMixin, CreateView):
-    model = DietaryHabits
-    fields = ['name']
-    template_name = 'dietaryhabits/form.html'
-    success_url = reverse_lazy('dietary-habits-list')
-
-class DietaryHabitsDetailView(LoginRequiredMixin, DetailView):
-    model = DietaryHabits
-    template_name = 'dietaryhabits/detail.html'
-    context_object_name = 'dietary_habit'
-
-class DietaryHabitsUpdateView(LoginRequiredMixin, UpdateView):
-    model = DietaryHabits
-    fields = ['name']
-    template_name = 'dietaryhabits/form.html'
-    success_url = reverse_lazy('dietary-habits-list')
-
-class DietaryHabitsDeleteView(LoginRequiredMixin, DeleteView):
-    model = DietaryHabits
-    template_name = 'dietaryhabits/confirm_delete.html'
-    success_url = reverse_lazy('dietary-habits-list')
-
-# Degree Views
-class DegreeListView(LoginRequiredMixin, ListView):
-    model = Degree
-    template_name = 'degree/list.html'
-    context_object_name = 'degrees'
-
-class DegreeCreateView(LoginRequiredMixin, CreateView):
-    model = Degree
-    fields = ['name']
-    template_name = 'degree/form.html'
-    success_url = reverse_lazy('degree-list')
-
-class DegreeDetailView(LoginRequiredMixin, DetailView):
-    model = Degree
-    template_name = 'degree/detail.html'
-    context_object_name = 'degree'
-
-class DegreeUpdateView(LoginRequiredMixin, UpdateView):
-    model = Degree
-    fields = ['name']
-    template_name = 'degree/form.html'
-    success_url = reverse_lazy('degree-list')
-
-class DegreeDeleteView(LoginRequiredMixin, DeleteView):
-    model = Degree
-    template_name = 'degree/confirm_delete.html'
-    success_url = reverse_lazy('degree-list')
-
 # Student Views
 class StudentListView(LoginRequiredMixin, ListView):
     model = Student
@@ -174,3 +80,97 @@ class StudentDeleteView(LoginRequiredMixin, DeleteView):
     model = Student
     template_name = 'student/confirm_delete.html'
     success_url = reverse_lazy('student-list')
+
+class EvaluationMetricsView(LoginRequiredMixin, TemplateView):
+    """
+    Classe que gera métricas como Curva ROC, Matriz de Confusão, Precisão, etc.
+    e exibe em um template HTML.
+    """
+    template_name = 'metrics/evaluation_metrics.html'
+
+    def get(self, request, *args, **kwargs):
+        # 1. Carregar o pipeline treinado (model.pkl)
+        model_path = os.path.join(settings.BASE_DIR, 'ai/model.pkl')
+        with open(model_path, 'rb') as f:
+            pipeline = pickle.load(f)
+
+        # 2. Carregar o dataset (exemplo) para teste
+        data_path = os.path.join(settings.BASE_DIR, 'ai/student_depression.csv')
+        df = pd.read_csv(data_path)
+
+        # Remover colunas que não foram usadas no treino
+        target_column = "depression"
+        meta_columns = ["id", "city"]
+        df = df.drop(columns=meta_columns)
+
+        # Separar X e y
+        X = df.drop(columns=[target_column])
+        y = df[target_column]
+
+        # Split de treino e teste (mesmo random_state do treino, se quiser reproduzir)
+        X_train, X_test, y_train, y_test = train_test_split(
+            X, y, test_size=0.2, random_state=42, stratify=y
+        )
+
+        # Prever com o pipeline
+        y_pred = pipeline.predict(X_test)
+        y_prob = pipeline.predict_proba(X_test)[:, 1]
+
+        # Métricas
+        confusion = confusion_matrix(y_test, y_pred)
+        prec = precision_score(y_test, y_pred)
+
+        # Curva ROC
+        fpr, tpr, _ = roc_curve(y_test, y_prob)
+        roc_auc = auc(fpr, tpr)
+
+        # -----------------------------------------------
+        #    GRÁFICO 1: CURVA ROC
+        # -----------------------------------------------
+        plt.figure(figsize=(5, 4))
+        plt.plot(fpr, tpr, color='red', label=f'ROC curve (area = {roc_auc:.2f})')
+        plt.plot([0, 1], [0, 1], color='blue', linestyle='--')
+        plt.xlim([0.0, 1.0])
+        plt.ylim([0.0, 1.05])
+        plt.xlabel('False Positive Rate')
+        plt.ylabel('True Positive Rate')
+        plt.title('Curva ROC')
+        plt.legend(loc="lower right")
+
+        # Converter para base64
+        buf = io.BytesIO()
+        plt.savefig(buf, format='png')
+        buf.seek(0)
+        roc_image_png = buf.getvalue()
+        roc_image_base64 = base64.b64encode(roc_image_png).decode('utf-8')
+        plt.close()
+
+        # -----------------------------------------------
+        #    GRÁFICO 2: MATRIZ DE CONFUSÃO
+        # -----------------------------------------------
+        plt.figure(figsize=(5, 4))
+        plt.matshow(confusion, cmap='Blues')
+        plt.title('Matriz de Confusão', pad=15)
+        plt.colorbar()
+        plt.ylabel('True label')
+        plt.xlabel('Predicted label')
+
+        # Colocar valores nas células
+        for (i, j), value in np.ndenumerate(confusion):
+            plt.text(j, i, f"{value}", ha='center', va='center')
+
+        buf2 = io.BytesIO()
+        plt.savefig(buf2, format='png')
+        buf2.seek(0)
+        cm_image_png = buf2.getvalue()
+        cm_image_base64 = base64.b64encode(cm_image_png).decode('utf-8')
+        plt.close()
+
+        # Preparar o contexto para o template
+        context = {
+            "precision": round(prec, 3),
+            "roc_image_base64": roc_image_base64,
+            "cm_image_base64": cm_image_base64,
+        }
+
+        return self.render_to_response(context)

@@ -1,7 +1,0 @@
-<h1>Delete Dietary Habit</h1>
-<p>Are you sure you want to delete {{ dietary_habit.name }}?</p>
-<form method="post">
-    {% csrf_token %}
-    <button type="submit">Yes, delete</button>
-</form>
-<a href="{% url 'dietary-habits-list' %}">Cancel</a>

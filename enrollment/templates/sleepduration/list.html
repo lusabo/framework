@@ -1,7 +1,0 @@
-<h1>List of Sleep Durations</h1>
-<ul>
-    {% for sleep_duration in sleep_durations %}
-        <li><a href="{{ sleep_duration.get_absolute_url }}">{{ sleep_duration.name }}</a></li>
-    {% endfor %}
-</ul>
-<a href="{% url 'sleep-duration-create' %}">Add New Sleep Duration</a>

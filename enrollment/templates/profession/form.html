@@ -1,7 +1,0 @@
-<h1>Add or Edit Profession</h1>
-<form method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Save</button>
-</form>
-<a href="{% url 'profession-list' %}">Back to list</a>

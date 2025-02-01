@@ -1,7 +1,0 @@
-<h1>Add or Edit Dietary Habit</h1>
-<form method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Save</button>
-</form>
-<a href="{% url 'dietary-habits-list' %}">Back to list</a>
