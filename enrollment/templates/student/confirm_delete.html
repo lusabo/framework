@@ -2,12 +2,20 @@
 
 {% block content %}
     <div class="container py-4">
-        <h1>Delete Student</h1>
-        <p>Are you sure you want to delete {{ student.name }}?</p>
-        <form method="post">
-            {% csrf_token %}
-            <button type="submit">Yes, delete</button>
-        </form>
-        <a href="{% url 'student-list' %}">Cancel</a>
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <div class="card shadow">
+                    <div class="card-body">
+                        <h1 class="card-title">Apagar estudante</h1>
+                        <p class="card-text">Você tem certeza que quer apagar o estudante {{ student.name }}?</p>
+                        <form method="post" class="d-flex justify-content-between">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-danger">Sim, apagar</button>
+                            <a href="{% url 'student-list' %}" class="btn btn-secondary">Cancelar</a>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 {% endblock %}
