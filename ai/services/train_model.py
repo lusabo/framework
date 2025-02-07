@@ -14,14 +14,16 @@ from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import OneHotEncoder, StandardScaler
 
 # Importa o model que representa a tabela de dados
-from .models import TrainingData
+from ai.models import TrainingData
+
+# Importa as configurações do Django para utilizar a variável MODEL_DIR
+from django.conf import settings
 
 
 class ModelTrainer:
     @staticmethod
     def train():
         # 1. Carregar os dados da tabela TrainingData do banco de dados
-        # Converte o QuerySet em uma lista de dicionários para criar um DataFrame
         qs = TrainingData.objects.all().values()
         df = pd.DataFrame(list(qs))
 
@@ -35,8 +37,6 @@ class ModelTrainer:
         # 2. Definir target e remover colunas que não serão usadas como features
         target_column = "depression"
         meta_columns = ["id", "city"]  # Colunas que servem apenas de metadados
-
-        # Caso alguma coluna não exista, errors='ignore' evita erros
         df = df.drop(columns=meta_columns, errors='ignore')
 
         # Separar X (features) e y (target)
@@ -106,8 +106,8 @@ class ModelTrainer:
             "MCC": round(mcc, 3)
         }
 
-        # 9. Salvar o pipeline (pré-processador + modelo) no diretório "model"
-        model_dir = "model"
+        # 9. Salvar o pipeline (pré-processador + modelo) no diretório definido em settings.MODEL_DIR
+        model_dir = settings.MODEL_DIR
         os.makedirs(model_dir, exist_ok=True)
         model_filename = os.path.join(model_dir, "model.pkl")
 

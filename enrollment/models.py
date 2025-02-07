@@ -2,7 +2,7 @@ from django.db import models
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.urls import reverse
 from datetime import date
-from ai.utils import generate_depression_risk
+from ai.services.utils import generate_depression_risk
 
 class City(models.Model):
     name = models.CharField(max_length=255)
