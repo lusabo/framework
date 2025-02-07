@@ -21,13 +21,16 @@
                         <a class="nav-link" href="/home">🏠 Início</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{% url 'student-list' %}">👤 Estudantes</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'evaluation_metrics' %}">📈 Métricas</a>
-                    </li>
-                    <li class="nav-item">
                         <a class="nav-link" href="{% url 'import_csv' %}">📄 Importar CSV</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'train_model' %}">⚙️ Treinar Modelo</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'metrics' %}">📈 Métricas</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'student-list' %}">👤 Estudantes</a>
                     </li>
                     <li class="nav-item">
                         <form method="post" action="{% url 'logout' %}" class="d-flex align-items-center w-100">
@@ -48,6 +51,7 @@
 
     </div>
 </div>
+
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

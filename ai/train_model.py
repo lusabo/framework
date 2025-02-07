@@ -1,108 +1,120 @@
-import pandas as pd
+import os
 import pickle
 
-from sklearn.pipeline import Pipeline
+import pandas as pd
 from sklearn.compose import ColumnTransformer
-from sklearn.preprocessing import OneHotEncoder, StandardScaler
 from sklearn.impute import SimpleImputer
 from sklearn.linear_model import LogisticRegression
-from sklearn.model_selection import train_test_split
 from sklearn.metrics import (
     accuracy_score, precision_score, recall_score, f1_score,
     roc_auc_score, matthews_corrcoef
 )
+from sklearn.model_selection import train_test_split
+from sklearn.pipeline import Pipeline
+from sklearn.preprocessing import OneHotEncoder, StandardScaler
 
-# 1. Carregando o dataset
-df = pd.read_csv('/Users/ctw00874/workspace/framework/ai/student_depression.csv')
+# Importa o model que representa a tabela de dados
+from .models import TrainingData
 
 
-# -----------------------------------------------------------
-#    EXEMPLO DE CABEÇALHO ESPERADO EM student_depression.csv
-#
-#    id, gender, age, city, profession, academic_pressure,
-#    work_pressure, cgpa, study_satisfaction, job_satisfaction,
-#    sleep_duration, dietary_habits, degree, suicidal_thoughts,
-#    work_study_hour, financial_stress, family_history_mental_illness,
-#    depression
-# -----------------------------------------------------------
+class ModelTrainer:
+    @staticmethod
+    def train():
+        # 1. Carregar os dados da tabela TrainingData do banco de dados
+        # Converte o QuerySet em uma lista de dicionários para criar um DataFrame
+        qs = TrainingData.objects.all().values()
+        df = pd.DataFrame(list(qs))
 
-# 2. Definindo target e removendo colunas que não serão usadas
-target_column = "depression"
-meta_columns = ["id", "city"]  # Por exemplo, se não quiser usar 'city' como feature
+        # Exemplo de cabeçalho esperado na tabela TrainingData:
+        # id, gender, age, city, profession, academic_pressure,
+        # work_pressure, cgpa, study_satisfaction, job_satisfaction,
+        # sleep_duration, dietary_habits, degree, suicidal_thoughts,
+        # work_study_hour, financial_stress, family_history_mental_illness,
+        # depression
 
-df = df.drop(columns=meta_columns)
+        # 2. Definir target e remover colunas que não serão usadas como features
+        target_column = "depression"
+        meta_columns = ["id", "city"]  # Colunas que servem apenas de metadados
 
-# Separamos X e y
-X = df.drop(columns=[target_column])
-y = df[target_column]
+        # Caso alguma coluna não exista, errors='ignore' evita erros
+        df = df.drop(columns=meta_columns, errors='ignore')
 
-# 3. Identificar colunas categóricas e numéricas
-# Ajuste conforme seu dataset real:
-categorical_cols = [
-    "gender",
-    "profession",
-    "sleep_duration",
-    "dietary_habits",
-    "degree",
-    "suicidal_thoughts",
-    "family_history_mental_illness"
-]
-numerical_cols = list(set(X.columns) - set(categorical_cols))
-# Ex.: [age, academic_pressure, work_pressure, cgpa, study_satisfaction,
-#       job_satisfaction, work_study_hour, financial_stress]
+        # Separar X (features) e y (target)
+        X = df.drop(columns=[target_column])
+        y = df[target_column]
 
-# 4. Criar transformações para numéricas e categóricas
-numeric_transformer = Pipeline([
-    ("imputer", SimpleImputer(strategy="median")),
-    ("scaler", StandardScaler())
-])
+        # 3. Identificar colunas categóricas e numéricas
+        categorical_cols = [
+            "gender",
+            "profession",
+            "sleep_duration",
+            "dietary_habits",
+            "degree",
+            "suicidal_thoughts",
+            "family_history_mental_illness"
+        ]
+        numerical_cols = list(set(X.columns) - set(categorical_cols))
 
-categorical_transformer = Pipeline([
-    ("imputer", SimpleImputer(strategy="most_frequent")),
-    ("onehot", OneHotEncoder(handle_unknown="ignore"))
-])
+        # 4. Criar transformações para colunas numéricas e categóricas
+        numeric_transformer = Pipeline([
+            ("imputer", SimpleImputer(strategy="median")),
+            ("scaler", StandardScaler())
+        ])
 
-preprocessor = ColumnTransformer([
-    ("num", numeric_transformer, numerical_cols),
-    ("cat", categorical_transformer, categorical_cols)
-])
+        categorical_transformer = Pipeline([
+            ("imputer", SimpleImputer(strategy="most_frequent")),
+            ("onehot", OneHotEncoder(handle_unknown="ignore"))
+        ])
 
-# 5. Montar o Pipeline final (pré-processamento + modelo)
-model_pipeline = Pipeline([
-    ("preprocessor", preprocessor),
-    ("classifier", LogisticRegression(max_iter=200, solver="liblinear"))
-])
+        preprocessor = ColumnTransformer([
+            ("num", numeric_transformer, numerical_cols),
+            ("cat", categorical_transformer, categorical_cols)
+        ])
 
-# 6. Split de treino e teste
-X_train, X_test, y_train, y_test = train_test_split(
-    X, y, test_size=0.2, random_state=42, stratify=y
-)
+        # 5. Montar o Pipeline final (pré-processamento + modelo)
+        model_pipeline = Pipeline([
+            ("preprocessor", preprocessor),
+            ("classifier", LogisticRegression(max_iter=200, solver="liblinear"))
+        ])
 
-# 7. Treinar (fit) o pipeline
-model_pipeline.fit(X_train, y_train)
+        # 6. Dividir os dados em treino e teste
+        X_train, X_test, y_train, y_test = train_test_split(
+            X, y, test_size=0.2, random_state=42, stratify=y
+        )
 
-# 8. Avaliar o modelo
-y_pred = model_pipeline.predict(X_test)
-y_pred_proba = model_pipeline.predict_proba(X_test)[:, 1]
+        # 7. Treinar (fit) o pipeline
+        model_pipeline.fit(X_train, y_train)
 
-accuracy = accuracy_score(y_test, y_pred)
-precision = precision_score(y_test, y_pred)
-recall = recall_score(y_test, y_pred)
-f1 = f1_score(y_test, y_pred)
-mcc = matthews_corrcoef(y_test, y_pred)
-auc = roc_auc_score(y_test, y_pred_proba)
+        # 8. Avaliar o modelo
+        y_pred = model_pipeline.predict(X_test)
+        y_pred_proba = model_pipeline.predict_proba(X_test)[:, 1]
 
-print("\n==== Avaliação do Modelo ====")
-print(f"AUC: {auc:.3f}")
-print(f"Acurácia: {accuracy:.3f}")
-print(f"Precision: {precision:.3f}")
-print(f"Recall: {recall:.3f}")
-print(f"F1: {f1:.3f}")
-print(f"MCC: {mcc:.3f}")
+        accuracy = accuracy_score(y_test, y_pred)
+        precision = precision_score(y_test, y_pred)
+        recall = recall_score(y_test, y_pred)
+        f1 = f1_score(y_test, y_pred)
+        mcc = matthews_corrcoef(y_test, y_pred)
+        auc = roc_auc_score(y_test, y_pred_proba)
 
-# 9. Salvar o pipeline inteiro (pré-processador + modelo)
-model_filename = "model.pkl"
-with open(model_filename, "wb") as file:
-    pickle.dump(model_pipeline, file)
+        # Organiza os dados de avaliação
+        metrics = {
+            "AUC": round(auc, 3),
+            "Acurácia": round(accuracy, 3),
+            "Precision": round(precision, 3),
+            "Recall": round(recall, 3),
+            "F1": round(f1, 3),
+            "MCC": round(mcc, 3)
+        }
 
-print(f"\nPipeline completo salvo em: {model_filename}")
+        # 9. Salvar o pipeline (pré-processador + modelo) no diretório "model"
+        model_dir = "model"
+        os.makedirs(model_dir, exist_ok=True)
+        model_filename = os.path.join(model_dir, "model.pkl")
+
+        with open(model_filename, "wb") as file:
+            pickle.dump(model_pipeline, file)
+
+        metrics["model_path"] = model_filename
+
+        # Retorna as métricas e o caminho do pipeline salvo
+        return metrics

@@ -14,7 +14,7 @@ def generate_depression_risk(student):
     from django.conf import settings  # se precisar pegar caminhos do settings
 
     # Carregar o pipeline treinado
-    model_path = 'ai/model.pkl'  # Ajuste o path de acordo com seu projeto
+    model_path = 'model/model.pkl'  # Ajuste o path de acordo com seu projeto
     with open(model_path, 'rb') as file:
         pipeline = pickle.load(file)
 

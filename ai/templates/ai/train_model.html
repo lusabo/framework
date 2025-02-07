@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <h1>Treinar Modelo</h1>
+
+    {% if messages %}
+      {% for message in messages %}
+        <div class="alert alert-{% if message.tags %}{{ message.tags }}{% else %}info{% endif %}">
+            {{ message }}
+        </div>
+      {% endfor %}
+    {% endif %}
+
+    {% if metrics %}
+    <div class="alert alert-info">
+        <h3>Métricas do Modelo</h3>
+        <ul>
+            <li><strong>AUC:</strong> {{ metrics.AUC }}</li>
+            <li><strong>Acurácia:</strong> {{ metrics.Acurácia }}</li>
+            <li><strong>Precision:</strong> {{ metrics.Precision }}</li>
+            <li><strong>Recall:</strong> {{ metrics.Recall }}</li>
+            <li><strong>F1:</strong> {{ metrics.F1 }}</li>
+            <li><strong>MCC:</strong> {{ metrics.MCC }}</li>
+            <li><strong>Modelo salvo em:</strong> {{ metrics.model_path }}</li>
+        </ul>
+    </div>
+    {% endif %}
+
+    <!-- Formulário para iniciar o treinamento -->
+    <form id="train-model-form" method="post">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-primary">Treinar Modelo</button>
+    </form>
+</div>
+
+<!-- Overlay de loading (opcional) -->
+<div id="loading" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+     background-color: rgba(0,0,0,0.5); z-index: 9999;">
+    <div class="d-flex justify-content-center align-items-center" style="height: 100%;">
+        <div class="spinner-border text-light" role="status">
+            <span class="sr-only">Carregando...</span>
+        </div>
+    </div>
+</div>
+
+<!-- Script para exibir o loading ao submeter o formulário -->
+<script>
+document.getElementById('train-model-form').addEventListener('submit', function() {
+    document.getElementById('loading').style.display = 'block';
+});
+</script>
+{% endblock %}
